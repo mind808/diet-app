@@ -1,0 +1,19 @@
+﻿{
+  "name": "减肥打卡",
+  "short_name": "减肥打卡",
+  "description": "每日饮食记录与热量管理工具",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f7f7f7",
+  "theme_color": "#4CAF50",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "fitness", "lifestyle"]
+}
