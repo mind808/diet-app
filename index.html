@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>减肥打卡</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4CAF50">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="减肥打卡">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-container" id="app">
+  <div class="status-bar"><span id="statusTime">10:30</span><span>📶 🔋</span></div>
+  <div class="nav-bar" id="navTitle">今日打卡</div>
+  <div class="page active" id="page0">
+    <div class="content">
+      <div class="card header-card">
+        <div class="date-row"><span class="date-text" id="hDate"></span><span class="weekday-text" id="hWeekday"></span></div>
+        <div class="streak-row"><span class="streak-emoji">🔥</span><span class="streak-text">连续打卡 <span class="streak-num" id="hStreak"></span> 天</span></div>
+      </div>
+      <div class="card">
+        <div class="calorie-header"><span class="section-title">今日热量</span><span><span class="calorie-num" id="calNum"></span><span class="calorie-unit"> / <span id="calGoal"></span> kcal</span></span></div>
+        <div class="progress-bg"><div class="progress-fill" id="calBar"></div></div>
+        <div class="calorie-status" id="calStatus"></div>
+      </div>
+      <div class="card warn-banner" id="warnBanner" style="display:none">
+        <span style="font-size:24px">🚨</span>
+        <div><div class="warn-title">热量已超标</div><div class="warn-desc">超出目标 <span id="warnAmount"></span> kcal，建议增加运动消耗</div></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px">快速记录</div>
+        <div class="quick-grid">
+          <div class="quick-btn" onclick="quickAdd('breakfast')"><span class="quick-icon">🌅</span><span class="quick-label">早餐</span></div>
+          <div class="quick-btn" onclick="quickAdd('lunch')"><span class="quick-icon">☀️</span><span class="quick-label">午餐</span></div>
+          <div class="quick-btn" onclick="quickAdd('dinner')"><span class="quick-icon">🌙</span><span class="quick-label">晚餐</span></div>
+          <div class="quick-btn" onclick="quickAdd('snack')"><span class="quick-icon">🍪</span><span class="quick-label">加餐</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="list-header"><span class="section-title">今日饮食记录</span><button class="btn-add" onclick="openAdd()">+ 添加</button></div>
+        <div id="mealList"></div>
+      </div>
+      <div class="card" onclick="openWeight()" style="cursor:pointer">
+        <div class="section-title" style="margin-bottom:6px">记录体重</div>
+        <div class="weight-row" id="weightDisplay"></div>
+      </div>
+    </div>
+  </div>
+  <div class="page" id="page1">
+    <div class="content">
+      <div class="card">
+        <div class="cal-header"><span class="cal-arrow" onclick="prevMonth()">‹</span><span class="cal-title" id="calTitle"></span><span class="cal-arrow" onclick="nextMonth()">›</span></div>
+        <div id="calGrid"></div>
+      </div>
+      <div class="card"><div class="stats-row" id="statsHTML"></div></div>
+      <div class="card" id="dayDetail"></div>
+    </div>
+  </div>
+  <div class="page" id="page2">
+    <div class="content">
+      <div class="card">
+        <div class="section-title" style="margin-bottom:4px">个人目标</div>
+        <div class="setting-item"><span class="setting-label">每日热量目标</span><input class="setting-input" id="sCalGoal" type="number" style="width:120px;text-align:right"></div>
+        <div class="setting-item"><span class="setting-label">当前体重</span><input class="setting-input" id="sWeightVal" type="number" step="0.1" style="width:100px;text-align:right"></div>
+        <button class="save-btn" onclick="saveSettingsUI()" style="padding:10px 0">保存设置</button>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:4px">每日提醒</div>
+        <div class="setting-item"><span class="setting-label">开启提醒</span><input type="checkbox" id="sRemindToggle" class="toggle-checkbox"></div>
+        <div class="setting-item"><span class="setting-label">提醒时间</span><input type="time" id="sRemindTime" style="font-size:14px;color:#4CAF50;font-weight:600;border:none;background:transparent"></div>
+        <div class="setting-hint">开启后，每天到提醒时间打开页面时会提醒记录饮食</div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:4px">数据管理</div>
+        <button class="action-btn" onclick="clearToday()">清除今日数据</button>
+        <button class="action-btn" onclick="clearAll()" style="margin-top:6px;background:#f44336;color:#fff">清除所有数据</button>
+      </div>
+      <div style="text-align:center;padding:20px 0;color:#bbb;font-size:11px">减肥打卡 v1.0 · 数据存在本地</div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab(0)"><span class="tab-icon">🏠</span><span>首页</span></div>
+    <div class="tab-item" onclick="switchTab(1)"><span class="tab-icon">📅</span><span>记录</span></div>
+    <div class="tab-item" onclick="switchTab(2)"><span class="tab-icon">⚙️</span><span>设置</span></div>
+  </div>
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header"><span class="modal-title" id="modalTitle"></span><span class="modal-close" onclick="closeModal()">✕</span></div>
+    <div class="modal-body" id="modalContent"></div>
+    <button class="save-btn" id="modalSaveBtn" style="margin-top:12px"></button>
+  </div>
+  <div class="modal-overlay" id="dialogOverlay"></div>
+  <div class="dialog-box" id="dialogBox">
+    <div class="dialog-title" id="dialogTitle"></div>
+    <div class="dialog-msg" id="dialogMsg"></div>
+    <div class="dialog-btns"><button class="dialog-btn cancel" id="dialogCancel">取消</button><button class="dialog-btn confirm" id="dialogConfirm">确定</button></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+<script src="app_all.js"></script>
+<script>if("serviceWorker"in navigator){navigator.serviceWorker.register("sw.js")}</script>
+</body>
+</html>
